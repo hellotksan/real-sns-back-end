@@ -7,7 +7,10 @@ const uploadRoute = require("./routes/upload");
 const PORT = 5000;
 const mongoose = require("mongoose");
 const path = require("path");
+const cors = require('cors');
 require("dotenv").config();
+
+app.use(cors());
 
 // データベース接続
 mongoose
