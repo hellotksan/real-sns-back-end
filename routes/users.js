@@ -58,6 +58,20 @@ router.get("/", async (req, res) => {
   }
 });
 
+// 全ユーザー情報を取得する
+router.get("/all", async (req, res) => {
+  try {
+    const users = await User.find();
+    const sanitizedUsers = users.map((user) => {
+      const { password, updatedAt, ...other } = user._doc;
+      return other;
+    });
+    return res.status(200).json(sanitizedUsers);
+  } catch (error) {
+    return res.status(500).json(error);
+  }
+});
+
 // ユーザのフォロー
 router.put("/:id/follow", async (req, res) => {
   if (req.body.userId !== req.params.id) {
