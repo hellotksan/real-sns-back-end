@@ -49,6 +49,20 @@ router.delete("/:id", async (req, res) => {
 //   }
 // });
 
+// 全ユーザー情報を取得する
+router.get("/all", async (req, res) => {
+  try {
+    const users = await User.find();
+    const sanitizedUsers = users.map((user) => {
+      const { password, updatedAt, ...other } = user._doc;
+      return other;
+    });
+    return res.status(200).json(sanitizedUsers);
+  } catch (error) {
+    return res.status(500).json(error);
+  }
+});
+
 // ユーザ取得
 router.get("/:id", async (req, res) => {
   try {
@@ -70,20 +84,6 @@ router.get("/", async (req, res) => {
       : await User.findOne({ username: username });
     const { password, updatedAt, ...other } = user._doc;
     return res.status(200).json(other);
-  } catch (error) {
-    return res.status(500).json(error);
-  }
-});
-
-// 全ユーザー情報を取得する
-router.get("/all", async (req, res) => {
-  try {
-    const users = await User.find();
-    const sanitizedUsers = users.map((user) => {
-      const { password, updatedAt, ...other } = user._doc;
-      return other;
-    });
-    return res.status(200).json(sanitizedUsers);
   } catch (error) {
     return res.status(500).json(error);
   }
