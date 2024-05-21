@@ -32,16 +32,33 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
-// ユーザ取得
-// router.get("/:id", async (req, res) => {
-//   try {
-//     const user = await User.findById(req.params.id);
-//     const { password, updatedAt, ...other } = user._doc;
-//     return res.status(200).json(other);
-//   } catch (error) {
-//     return res.status(500).json(error);
+// ユーザ削除
+// router.delete("/:id", async (req, res) => {
+//   const userId = req.params.id;
+//   const { userId: reqUserId, isAdmin } = req.body;
+
+//   if (reqUserId === userId || isAdmin) {
+//     try {
+//       const user = await User.findByIdAndDelete(userId);
+//       res.status(200).json("アカウントが削除されました！");
+//     } catch (error) {
+//       return res.status(500).json(error);
+//     }
+//   } else {
+//     return res.status(403).json("自分のアカウントのみ削除できます！");
 //   }
 // });
+
+// ユーザ取得
+router.get("/:id", async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    const { password, updatedAt, ...other } = user._doc;
+    return res.status(200).json(other);
+  } catch (error) {
+    return res.status(500).json(error);
+  }
+});
 
 // クエリでユーザ情報を取得
 router.get("/", async (req, res) => {
