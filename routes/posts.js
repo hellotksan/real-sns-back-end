@@ -108,20 +108,21 @@ router.get("/timeline/:userId", async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // フォローしているユーザーのIDをSetに保存
-    const followingSet = new Set(
-      currentUser.followings.map((id) => id.toString())
-    );
+    // フォローしているユーザーと自身のIDを含む配列を作成
+    const userIds = [
+      ...currentUser.followings.map((id) => id.toString()),
+      userId,
+    ];
 
     // カーソルの条件（カーソルがなければ最新の投稿から取得）
     const cursorCondition = cursor ? { _id: { $lt: cursor } } : {};
 
-    // 最新の投稿を100件取得（カーソルを利用）
+    // 自分とフォローしているユーザーの投稿を取得
     const posts = await Post.find({
       ...cursorCondition,
-      userId: { $in: Array.from(followingSet) },
+      userId: { $in: userIds },
     })
-      .sort({ _id: -1 }) // MongoDBの`_id`を基準に降順ソート
+      .sort({ createdAt: -1 }) // 作成日時で降順ソート
       .limit(100);
 
     // 次のカーソル（取得した投稿の最後のID）を計算
