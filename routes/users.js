@@ -43,7 +43,7 @@ router.get("/", async (req, res) => {
 
 // ユーザを更新するAPI
 router.put("/:id", async (req, res) => {
-  if (req.body.userId === req.params.id || req.body.isAdmin) {
+  if (req.body.userId === req.params.id) {
     try {
       const user = await User.findByIdAndUpdate(req.params.id, {
         $set: req.body,
@@ -59,7 +59,7 @@ router.put("/:id", async (req, res) => {
 
 // ユーザを削除するAPI
 router.delete("/:id", async (req, res) => {
-  if (req.body.userId === req.params.id || req.body.isAdmin) {
+  if (req.body.userId === req.params.id) {
     try {
       const user = await User.findByIdAndDelete(req.params.id);
       res.status(200).json("Account has been deleted!");
