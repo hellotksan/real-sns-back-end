@@ -1,9 +1,47 @@
 const router = require("express").Router();
 const User = require("../models/User");
-const Post = require("../models/Post");
 
-// CRUD操作
-// ユーザ更新
+// 全ユーザー情報を取得するAPI
+router.get("/all", async (req, res) => {
+  try {
+    const users = await User.find();
+    const sanitizedUsers = users.map((user) => {
+      const { password, updatedAt, ...other } = user._doc;
+      return other;
+    });
+    return res.status(200).json(sanitizedUsers);
+  } catch (error) {
+    return res.status(500).json(error);
+  }
+});
+
+// userIdからユーザ情報を取得するAPI
+router.get("/:id", async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    const { password, updatedAt, ...other } = user._doc;
+    return res.status(200).json(other);
+  } catch (error) {
+    return res.status(500).json(error);
+  }
+});
+
+// クエリからユーザ情報を取得するAPI
+router.get("/", async (req, res) => {
+  const userId = req.query.userId;
+  const username = req.query.username;
+  try {
+    const user = userId
+      ? await User.findById(userId)
+      : await User.findOne({ username: username });
+    const { password, updatedAt, ...other } = user._doc;
+    return res.status(200).json(other);
+  } catch (error) {
+    return res.status(500).json(error);
+  }
+});
+
+// ユーザを更新するAPI
 router.put("/:id", async (req, res) => {
   if (req.body.userId === req.params.id || req.body.isAdmin) {
     try {
@@ -19,7 +57,7 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-// ユーザ削除
+// ユーザを削除するAPI
 router.delete("/:id", async (req, res) => {
   if (req.body.userId === req.params.id || req.body.isAdmin) {
     try {
@@ -33,64 +71,7 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
-// ユーザ削除
-// router.delete("/:id", async (req, res) => {
-//   const userId = req.params.id;
-//   const { userId: reqUserId, isAdmin } = req.body;
-
-//   if (reqUserId === userId || isAdmin) {
-//     try {
-//       const user = await User.findByIdAndDelete(userId);
-//       res.status(200).json("アカウントが削除されました！");
-//     } catch (error) {
-//       return res.status(500).json(error);
-//     }
-//   } else {
-//     return res.status(403).json("自分のアカウントのみ削除できます！");
-//   }
-// });
-
-// 全ユーザー情報を取得する
-router.get("/all", async (req, res) => {
-  try {
-    const users = await User.find();
-    const sanitizedUsers = users.map((user) => {
-      const { password, updatedAt, ...other } = user._doc;
-      return other;
-    });
-    return res.status(200).json(sanitizedUsers);
-  } catch (error) {
-    return res.status(500).json(error);
-  }
-});
-
-// ユーザ取得
-router.get("/:id", async (req, res) => {
-  try {
-    const user = await User.findById(req.params.id);
-    const { password, updatedAt, ...other } = user._doc;
-    return res.status(200).json(other);
-  } catch (error) {
-    return res.status(500).json(error);
-  }
-});
-
-// クエリでユーザ情報を取得
-router.get("/", async (req, res) => {
-  const userId = req.query.userId;
-  const username = req.query.username;
-  try {
-    const user = userId
-      ? await User.findById(userId)
-      : await User.findOne({ username: username });
-    const { password, updatedAt, ...other } = user._doc;
-    return res.status(200).json(other);
-  } catch (error) {
-    return res.status(500).json(error);
-  }
-});
-
-// ユーザのフォロー
+// ユーザをフォローするAPI
 router.put("/:id/follow", async (req, res) => {
   if (req.body.userId !== req.params.id) {
     try {
@@ -119,7 +100,7 @@ router.put("/:id/follow", async (req, res) => {
   }
 });
 
-// ユーザのフォローを外す
+// ユーザのフォローを外すAPI
 router.put("/:id/unfollow", async (req, res) => {
   if (req.body.userId !== req.params.id) {
     try {

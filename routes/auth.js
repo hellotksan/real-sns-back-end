@@ -1,10 +1,6 @@
 const router = require("express").Router();
 const User = require("../models/User");
 
-// router.get("/", (req, res) => {
-//   res.send("auth router!");
-// });
-
 // ユーザ登録
 router.post("/register", async (req, res) => {
   try {
