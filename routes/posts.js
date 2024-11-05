@@ -23,6 +23,24 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+// 投稿順に投稿を取得するAPI
+// 一度のフェッチで最大取得件数は10件
+app.get("/all", async (req, res) => {
+  const { page = 1 } = req.query;
+  const limit = 10;
+
+  try {
+    const posts = await Post.find()
+      .sort({ updatedAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(limit);
+
+    res.json(posts);
+  } catch (error) {
+    res.status(500).json({ message: "投稿を取得できませんでした。" });
+  }
+});
+
 // 投稿を更新するAPI
 router.put("/:id", async (req, res) => {
   try {
