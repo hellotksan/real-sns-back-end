@@ -2,27 +2,6 @@ const router = require("express").Router();
 const Post = require("../models/Post");
 const User = require("../models/User");
 
-// 投稿を作成するAPI
-router.post("/", async (req, res) => {
-  const newPost = new Post(req.body);
-  try {
-    const savedPost = await newPost.save();
-    return res.status(200).json(savedPost);
-  } catch (error) {
-    return res.status(500).json(error);
-  }
-});
-
-// 投稿を取得するAPI
-router.get("/:id", async (req, res) => {
-  try {
-    const post = await Post.findById(req.params.id);
-    return res.status(200).json(post);
-  } catch (error) {
-    return res.status(500).json(error);
-  }
-});
-
 // 投稿順に投稿を取得するAPI
 // 一度のフェッチで最大取得件数は10件
 router.get("/all", async (req, res) => {
@@ -38,6 +17,28 @@ router.get("/all", async (req, res) => {
     res.json(posts);
   } catch (error) {
     res.status(500).json({ message: "投稿を取得できませんでした。" });
+  }
+});
+
+// 指定されたIDの投稿を取得するAPI
+// パラメーターからIDを取得する
+router.get("/:id", async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+    return res.status(200).json(post);
+  } catch (error) {
+    return res.status(500).json(error);
+  }
+});
+
+// 投稿を作成するAPI
+router.post("/", async (req, res) => {
+  const newPost = new Post(req.body);
+  try {
+    const savedPost = await newPost.save();
+    return res.status(200).json(savedPost);
+  } catch (error) {
+    return res.status(500).json(error);
   }
 });
 
