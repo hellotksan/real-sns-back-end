@@ -25,7 +25,7 @@ router.get("/:id", async (req, res) => {
 
 // 投稿順に投稿を取得するAPI
 // 一度のフェッチで最大取得件数は10件
-app.get("/all", async (req, res) => {
+router.get("/all", async (req, res) => {
   const { page = 1 } = req.query;
   const limit = 10;
 
