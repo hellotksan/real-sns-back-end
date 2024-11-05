@@ -4,19 +4,42 @@ const User = require("../models/User");
 
 // 投稿順に投稿を取得するAPI
 // 一度のフェッチで最大取得件数は10件
+// router.get("/all", async (req, res) => {
+//   const { page = 1 } = req.query;
+//   const limit = 10;
+
+//   try {
+//     const posts = await Post.find()
+//       .sort({ updatedAt: -1 })
+//       .skip((page - 1) * limit)
+//       .limit(limit);
+
+//     res.json(posts);
+//   } catch (error) {
+//     res.status(500).json({ message: "投稿を取得できませんでした。" });
+//   }
+// });
+
+// 投稿順に投稿を取得するAPI
+// 一度のフェッチで最大取得件数は10件
 router.get("/all", async (req, res) => {
-  const { page = 1 } = req.query;
-  const limit = 10;
+  const { cursor, limit = 10 } = req.query;
 
   try {
-    const posts = await Post.find()
-      .sort({ updatedAt: -1 })
-      .skip((page - 1) * limit)
-      .limit(limit);
+    const query = cursor ? { _id: { $lt: cursor } } : {};
+    const posts = await Post.find(query)
+      .sort({ createdAt: -1 }) // 新しい投稿から取得
+      .limit(Number(limit));
 
-    res.json(posts);
+    // 次のカーソルを設定
+    const nextCursor = posts.length > 0 ? posts[posts.length - 1]._id : null;
+
+    res.json({
+      posts,
+      nextCursor,
+    });
   } catch (error) {
-    res.status(500).json({ message: "投稿を取得できませんでした。" });
+    res.status(500).json({ message: "サーバーエラーが発生しました" });
   }
 });
 
