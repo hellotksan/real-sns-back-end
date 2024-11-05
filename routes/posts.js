@@ -23,7 +23,8 @@ const User = require("../models/User");
 // 投稿順に投稿を取得するAPI
 // 一度のフェッチで最大取得件数は10件
 router.get("/all", async (req, res) => {
-  const { cursor, limit = 10 } = req.query;
+  const { cursor } = req.query;
+  const limit = 20;
 
   try {
     const query = cursor ? { _id: { $lt: cursor } } : {};
