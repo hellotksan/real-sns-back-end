@@ -10,7 +10,7 @@ require("dotenv").config();
 
 // CORS設定を信頼できるオリジンに限定
 const corsOptions = {
-  origin: "https://nextsns-one.vercel.app",
+  origin: ["https://nextsns-one.vercel.app", "http://localhost:5000"],
   optionsSuccessStatus: 200,
 };
 
