@@ -9,12 +9,14 @@ const cors = require("cors");
 require("dotenv").config();
 
 // CORS設定を信頼できるオリジンに限定
-const corsOptions = {
-  origin: ["https://nextsns-one.vercel.app", "http://localhost:3000"],
-  optionsSuccessStatus: 200,
-};
+// const corsOptions = {
+//   origin: ["https://nextsns-one.vercel.app", "http://localhost:3000"],
+//   optionsSuccessStatus: 200,
+// };
 
-app.use(cors(corsOptions));
+// app.use(cors(corsOptions));
+
+app.use(cors());
 
 // データベース接続
 mongoose
